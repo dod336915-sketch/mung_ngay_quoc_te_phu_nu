@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chúc Mừng 20/10 - Lớp A9 Cuối Cấp Rực Rỡ</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: radial-gradient(circle at center, #2d0c1f 0%, #12040c 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      padding: 20px;
+      color: #fff;
+    }
+
+    /* Canvas pháo hoa, hoa, cỏ 4 lá */
+    #fx-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1.main-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3.3rem;
+      background: linear-gradient(45deg, #ff758c, #ff7eb3, #ffd1dc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 25px rgba(255, 117, 140, 0.6);
+      margin-bottom: 25px;
+      animation: pulseTitle 2s infinite alternate;
+    }
+
+    @keyframes pulseTitle {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.03); }
+    }
+
+    /* Khung cảnh (Scene container) */
+    .scene {
+      background: rgba(35, 12, 27, 0.88);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      padding: 35px;
+      box-shadow: 0 15px 50px rgba(255, 105, 180, 0.35);
+      border: 2px solid rgba(255, 105, 180, 0.5);
+      display: none;
+      animation: fadeInScene 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      text-align: center;
+    }
+
+    .scene.active {
+      display: block;
+    }
+
+    @keyframes fadeInScene {
+      from {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .scene h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.4rem;
+      color: #ff85a2;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px rgba(255, 133, 162, 0.6);
+    }
+
+    .scene p {
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: #fce4ec;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .scene p strong {
+      color: #ff477e;
+    }
+
+    /* Bìa thư mở đầu */
+    .envelope-wrapper {
+      position: relative;
+      width: 280px;
+      height: 190px;
+      margin: 0 auto 20px auto;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(255, 75, 43, 0.4);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .envelope-wrapper:hover {
+      transform: translateY(-5px) scale(1.03);
+    }
+
+    .heart-seal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.1rem;
+      color: #fff;
+      background: rgba(255, 20, 147, 0.9);
+      padding: 10px 20px;
+      border-radius: 30px;
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.8);
+      font-weight: 700;
+      white-space: nowrap;
+      border: 2px solid #fff;
+    }
+
+    /* Nút chuyển cảnh */
+    .btn-next {
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(255, 75, 43, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-next:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 75, 43, 0.8);
+    }
+
+    .scene-icon {
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+      animation: bounceIcon 2s infinite;
+    }
+
+    @keyframes bounceIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Khung điều khiển nhạc (có thể chuyển bài) */
+    .music-player {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(35, 12, 27, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 105, 180, 0.6);
+      padding: 10px 18px;
+      border-radius: 35px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 5px 25px rgba(255, 105, 180, 0.4);
+      z-index: 10;
+    }
+
+    .music-btn {
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 0 15px rgba(255, 75, 43, 0.8);
+    }
+
+    .track-info {
+      font-size: 0.85rem;
+      color: #ffb3c6;
+      max-width: 130px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas hiệu ứng hạt bay: hoa, cỏ 4 lá, pháo hoa -->
+  <canvas id="fx-canvas"></canvas>
+
+  <div class="wrapper">
+    <h1 class="main-title">Gửi Các Bạn Nữ Lớp A9 ❤️</h1>
+
+    <!-- CẢNH 1: Bìa mở đầu -->
+    <div class="scene active" id="scene-1">
+      <div class="scene-icon">💌🍀</div>
+      <h2>Món Quà Đặc Biệt 20/10</h2>
+      <p>Gửi các bông hoa xinh đẹp của lớp A9, năm cuối cấp rồi, con trai lớp mình có một bất ngờ nhỏ cực kỳ tâm huyết dành cho các cậu đấy...</p>
+      <div class="envelope-wrapper" onclick="nextScene(2)">
+        <div class="heart-seal">✨ Khám phá ngay nhé! 🌸</div>
+      </div>
+    </div>
+
+    <!-- CẢNH 2: Hoài niệm cuối cấp A9 -->
+    <div class="scene" id="scene-2">
+      <div class="scene-icon">📚☘️</div>
+      <h2>Thanh Xuân Lớp A9</h2>
+      <p>Chớp mắt cái đã bước vào năm cuối cấp 2 rồi. Cảm ơn các bạn nữ A9 vì luôn mang lại nguồn năng lượng tích cực, sự đáng yêu và những tiếng cười cho cả lớp mình suốt thời gian qua!</p>
+      <button class="btn-next" onclick="nextScene(3)">Tiếp tục điều ước ➔</button>
+    </div>
+
+    <!-- CẢNH 3: Chúc thi đỗ NV1 cấp 3 -->
+    <div class="scene" id="scene-3">
+      <div class="scene-icon">🎯🎓</div>
+      <h2>Bứt Phá Vào 10</h2>
+      <p>Sắp tới là chặng đường nước rút cực kỳ quan trọng. Tụi con trai chúc các bạn sẽ <strong>thi đỗ Nguyện Vọng 1 (NV1)</strong> vào ngôi trường cấp 3 mơ ước, đạt được tất cả những điều tuyệt vời nhất mà mình mong muốn!</p>
+      <button class="btn-next" onclick="nextScene(4)">Lời nhắn cuối cùng ➔</button>
+    </div>
+
+    <!-- CẢNH 4: Lời chúc 20/10 tổng kết -->
+    <div class="scene" id="scene-4">
+      <div class="scene-icon">🌸✨🍀</div>
+      <h2>Chúc Mừng 20/10 Rực Rỡ</h2>
+      <p>Chúc các bạn luôn rạng rỡ, xinh đẹp và luôn giữ mãi nụ cười trên môi. Mong rằng A9 chúng ta sẽ có thật nhiều kỷ niệm đẹp khó quên trong năm cuối cấp này nhé! 🍀❤️</p>
+      <button class="btn-next" onclick="nextScene(1)">Xem lại từ đầu ↺</button>
+    </div>
+  </div>
+
+  <!-- Bảng điều khiển âm nhạc kết hợp -->
+  <div class="music-player">
+    <button class="music-btn" id="prev-track" onclick="prevSong()" title="Bài trước">⏮</button>
+    <button class="music-btn" id="music-toggle" onclick="toggleAudio()" title="Phát/Dừng">▶</button>
+    <button class="music-btn" id="next-track" onclick="nextSong()" title="Bài tiếp">⏭</button>
+    <div class="track-info" id="track-name">Nhạc: Chờ Anh Chút Thôi</div>
+  </div>
+
+  <!-- Danh sách nhạc kết hợp: Chờ anh chút thôi & Nơi này có anh -->
+  <audio id="bg-audio" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=sweet-love-111663.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Playlist nhạc mix (mô phỏng 2 bài qua nguồn stream ngọt ngào)
+    const playlist = [
+      { name: "Chờ Anh Chút Thôi", src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=sweet-love-111663.mp3" },
+      { name: "Nơi Này Có Anh", src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c368c740.mp3?filename=romantic-guitars-108130.mp3" }
+    ];
+    let currentTrackIndex = 0;
+
+    const audio = document.getElementById('bg-audio');
+    const trackNameEl = document.getElementById('track-name');
+    const toggleBtn = document.getElementById('music-toggle');
+
+    function loadTrack(index) {
+      audio.src = playlist[index].src;
+      trackNameEl.textContent = "Nhạc: " + playlist[index].name;
+      audio.load();
+    }
+
+    function toggleAudio() {
+      if (audio.paused) {
+        audio.play().then(() => {
+          toggleBtn.textContent = '⏸';
+        }).catch(e => console.log(e));
+      } else {
+        audio.pause();
+        toggleBtn.textContent = '▶';
+      }
+    }
+
+    function nextSong() {
+      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+      loadTrack(currentTrackIndex);
+      audio.play();
+      toggleBtn.textContent = '⏸';
+    }
+
+    function prevSong() {
+      currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrackIndex);
+      audio.play();
+      toggleBtn.textContent = '⏸';
+    }
+
+    // Chuyển cảnh mượt mà + Bắn pháo hoa
+    function nextScene(sceneNumber) {
+      document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+      document.getElementById('scene-' + sceneNumber).classList.add('active');
+      
+      triggerFireworks();
+
+      if (audio.paused) {
+        audio.play().catch(() => {});
+        toggleBtn.textContent = '⏸';
+      }
+    }
+
+    // Canvas hiệu ứng: Hoa hồng/anh đào, Cỏ 4 lá may mắn, Áo sao và Pháo hoa
+    const canvas = document.getElementById('fx-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Danh sách phần tử bay: hoa (🌸), cỏ 4 lá (🍀), ngôi sao (✨)
+    const particles = Array.from({ length: 65 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 8 + 5,
+      speedY: Math.random() * 1.2 + 0.4,
+      speedX: Math.random() * 1.2 - 0.6,
+      type: Math.random() > 0.35 ? 'flower' : (Math.random() > 0.5 ? 'clover' : 'star'),
+      opacity: Math.random() * 0.8 + 0.2,
+      rotation: Math.random() * 360,
+      rotSpeed: Math.random() * 2 - 1
+    }));
+
+    let fireworks = [];
+
+    function triggerFireworks() {
+      for (let i = 0; i < 60; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 5 + 2;
+        fireworks.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          color: `hsl(${Math.random() * 360}, 100%, 75%)`,
+          size: Math.random() * 4 + 2,
+          alpha: 1,
+          decay: Math.random() * 0.02 + 0.01
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+
+        ctx.font = `${p.size * 2}px sans-serif`;
+        if (p.type === 'flower') {
+          ctx.fillText('🌸', -p.size, p.size);
+        } else if (p.type === 'clover') {
+          ctx.fillText('🍀', -p.size, p.size);
+        } else {
+          ctx.fillText('✨', -p.size, p.size);
+        }
+
+        ctx.restore();
+
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.rotation += p.rotSpeed;
+
+        if (p.y > canvas.height + 20) {
+          p.y = -20;
+          p.x = Math.random() * canvas.width;
+        }
+      });
+
+      fireworks.forEach((fw, index) => {
+        ctx.save();
+        ctx.globalAlpha = fw.alpha;
+        ctx.fillStyle = fw.color;
+        ctx.beginPath();
+        ctx.arc(fw.x, fw.y, fw.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        fw.x += fw.vx;
+        fw.y += fw.vy;
+        fw.vy += 0.05;
+        fw.alpha -= fw.decay;
+
+        if (fw.alpha <= 0) {
+          fireworks.splice(index, 1);
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
